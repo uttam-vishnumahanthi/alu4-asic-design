@@ -1,35 +1,47 @@
-# 4-Bit ALU Design | RTL to ASIC
+# 4-Bit ALU Design — RTL to ASIC
+
+A 4-bit Arithmetic Logic Unit (ALU) implemented using Verilog HDL, with an open-source digital design and ASIC implementation workflow using Icarus Verilog, GTKWave, Yosys, OpenLane, and the SkyWater SKY130 PDK.
 
 ## Overview
 
-This project implements a 4-bit Arithmetic Logic Unit (ALU) using Verilog HDL. The goal is to explore the digital design and ASIC implementation workflow, from RTL development and functional simulation to logic synthesis and physical design using open-source EDA tools.
+This project focuses on the design and implementation of a 4-bit Arithmetic Logic Unit (ALU) using Verilog Hardware Description Language (HDL).
 
-The project uses Yosys for logic synthesis and explores OpenLane with the SkyWater SKY130 PDK for ASIC physical implementation.
+The project explores the digital hardware design workflow, starting from RTL development and functional simulation, progressing through logic synthesis and gate-level netlist generation, and investigating the steps required for ASIC physical implementation.
 
-## Features
+The design is developed in a Linux environment using open-source Electronic Design Automation (EDA) tools.
 
-- 4-bit arithmetic and logic operations
-- Verilog HDL-based RTL design
-- Functional simulation and testbench verification
-- Waveform analysis using GTKWave
-- Logic synthesis using Yosys
-- Gate-level netlist generation
-- ASIC physical-design exploration using OpenLane
-- Open-source EDA workflow on Linux
+The main objective is to understand how a behavioral RTL description is transformed into a hardware implementation and how digital logic design connects to the physical ASIC design process.
+
+## Project Objectives
+
+- Design a 4-bit Arithmetic Logic Unit using Verilog HDL.
+- Understand RTL design and combinational logic.
+- Implement arithmetic and logical operations.
+- Develop a testbench for functional verification.
+- Simulate the RTL using Icarus Verilog.
+- Analyze signal transitions using GTKWave.
+- Perform logic synthesis using Yosys.
+- Generate and inspect a synthesized Verilog netlist.
+- Examine synthesis statistics and logic optimization.
+- Explore ASIC physical design using OpenLane.
+- Work with the SkyWater SKY130 process design kit.
+- Understand the major stages of the RTL-to-GDSII workflow.
 
 ## ALU Architecture
 
-The ALU accepts two 4-bit input operands and a 2-bit operation selector.
+The ALU accepts two 4-bit operands, A and B, and a 2-bit operation selector, OP.
 
-### Inputs
+It produces a 4-bit result and three status outputs.
+
+### Input Signals
 
 | Signal | Width | Description |
 |---|---|---|
-| A | 4 bits | First operand |
-| B | 4 bits | Second operand |
+| A | 4 bits | First input operand |
+| B | 4 bits | Second input operand |
 | OP | 2 bits | Operation selector |
 
-### Outputs
+### Output Signals
 
 | Signal | Width | Description |
 |---|---|---|
@@ -38,22 +50,53 @@ The ALU accepts two 4-bit input operands and a 2-bit operation selector.
 | Z | 1 bit | Zero flag |
 | N | 1 bit | Negative/sign flag |
 
-The operation encoding and status-flag behavior are defined in the Verilog RTL implementation.
+The exact operation encoding and status-flag behavior are defined by the Verilog RTL implementation.
+
+### Operation Selection
+
+A 2-bit operation selector can represent four different operation codes.
+
+The following is an illustrative example. Confirm the actual mapping in the RTL before treating this table as the design specification.
+
+| OP | Example Operation |
+|---|---|
+| 00 | Addition |
+| 01 | Subtraction |
+| 10 | Bitwise AND |
+| 11 | Bitwise OR |
+
+### Status Flags
+
+- **Carry Flag (C):** Indicates a carry or another operation-specific condition, depending on the RTL implementation.
+- **Zero Flag (Z):** Indicates whether the result is zero, if implemented that way in the RTL.
+- **Negative Flag (N):** May indicate the most significant result bit or another sign-related condition, depending on the implementation.
+
+The exact behavior of each flag should be verified against the Verilog source and testbench.
 
 ## Tools and Technologies
 
-- **Verilog HDL** — RTL design
-- **Icarus Verilog** — Functional simulation
-- **GTKWave** — Waveform visualization
-- **Yosys** — Logic synthesis
-- **OpenLane** — ASIC implementation flow
-- **SkyWater SKY130 PDK** — Open-source process design kit
-- **Ubuntu Linux** — Development environment
+| Tool | Purpose |
+|---|---|
+| Verilog HDL | RTL design |
+| Icarus Verilog | Functional simulation |
+| GTKWave | Waveform visualization |
+| Yosys | Logic synthesis |
+| Graphviz | Synthesis graph visualization |
+| OpenLane | ASIC implementation flow |
+| SkyWater SKY130 PDK | Open-source process design kit |
+| Docker | Containerized tool execution |
+| Ubuntu Linux | Development environment |
+| Git | Version control |
+| GitHub | Source code hosting |
 
-## Project Structure
+## Repository Structure
+
+The project contains RTL source code, testbench files, synthesis outputs, and an OpenLane design configuration.
 
 ```text
 alu4/
+├── README.md
+├── .gitignore
 ├── rtl/
 │   └── alu.v
 ├── tb/
@@ -65,27 +108,137 @@ alu4/
 ├── alu_synth_graph.dot
 ├── alu_synth_graph.pdf
 ├── alu_4bit.ilang
-└── README.md
+├── alu_sim
+├── alu_tb.vvp
+└── alu.vcd
+```
 
+This is a representative structure. The actual files present in the repository may differ.
 
-Functional Simulation
-The design can be simulated using Icarus Verilog.
-Example commands:
+### Directory and File Descriptions
+
+- `rtl/`: Contains the Verilog RTL implementation.
+- `tb/`: Contains the testbench used for functional verification.
+- `syn/`: Contains synthesis scripts and related files.
+- `alu_pro/`: Contains the OpenLane design configuration and associated inputs.
+- `alu_pro/config.json`: Defines the OpenLane design configuration.
+- `alu_synth.v`: Generated synthesized Verilog netlist, if retained.
+- `alu_synth_graph.dot`: Synthesis graph in Graphviz DOT format.
+- `alu_synth_graph.pdf`: PDF rendering of the synthesis graph.
+- `alu_4bit.ilang`: Intermediate representation generated during synthesis.
+- `alu_sim`: Simulation executable, if generated.
+- `alu_tb.vvp`: Compiled Icarus Verilog simulation.
+- `alu.vcd`: Simulation waveform generated by the testbench.
+
+Generated binaries, waveforms, and intermediate files may be excluded from version control when they are reproducible from the source files.
+
+## 1. RTL Design Using Verilog HDL
+
+The ALU is described using Verilog HDL.
+
+The RTL defines the input operands, operation selector, result, and status outputs.
+
+The main RTL source file is:
+
+`rtl/alu.v`
+
+The top-level module used in the existing synthesis workflow is:
+
+`alu_4bit`
+
+The module name used in synthesis must match the module declaration in the Verilog source.
+
+The RTL describes the intended logical behavior of the ALU. Synthesis tools use this description to infer and optimize the underlying hardware structure.
+
+## 2. Functional Verification
+
+Functional verification checks whether the ALU produces the expected outputs for different input combinations.
+
+The testbench is located at:
+
+`tb/tb_alu.v`
+
+The testbench applies stimulus to the input operands and operation selector and observes the resulting outputs.
+
+Recommended verification cases include:
+
+- Addition and subtraction, if implemented.
+- Every supported logical operation.
+- Different combinations of input operands.
+- Zero-result conditions.
+- Carry behavior.
+- Negative or sign-related flag behavior.
+- Arithmetic boundary conditions.
+- Overflow-related behavior, where applicable.
+- All supported operation-selector values.
+
+A robust testbench should compare actual outputs against expected results and report failures automatically.
+
+Simulation output and waveform inspection are useful for identifying functional errors and unexpected signal transitions.
+
+## 3. RTL Simulation Using Icarus Verilog
+
+Icarus Verilog is an open-source Verilog simulator.
+
+From the project root, compile the RTL and testbench:
+
+```bash
+cd ~/projects/alu4
 iverilog -g2012 -o alu_tb.vvp rtl/alu.v tb/tb_alu.v
+```
+
+Run the simulation:
+
+```bash
 vvp alu_tb.vvp
+```
 
-If the testbench generates a VCD waveform, it can be inspected using GTKWave:
+The output depends on the messages and checks implemented in the testbench.
+
+If the testbench generates a Value Change Dump (VCD) waveform, the waveform can be opened separately using GTKWave.
+
+The simulation commands assume that the source files and module names match the paths shown above.
+
+## 4. Waveform Analysis Using GTKWave
+
+GTKWave is used to visualize digital signal transitions during simulation.
+
+If the testbench generates `alu.vcd`, open it with:
+
+```bash
 gtkwave alu.vcd
+```
 
-The waveform filename depends on the $dumpfile directive in the testbench.
-Logic Synthesis
-Yosys is used to process the RTL and generate a synthesized netlist.
-Example commands:
+Useful signals to inspect include:
+
+- `A`
+- `B`
+- `OP`
+- `RES`
+- `C`
+- `Z`
+- `N`
+
+Waveform analysis helps identify incorrect results, unexpected transitions, and mismatches between expected and actual behavior.
+
+The waveform filename must match the filename specified in the testbench's `$dumpfile` directive.
+
+## 5. Logic Synthesis Using Yosys
+
+Yosys is an open-source synthesis framework that processes RTL and transforms it into a lower-level hardware representation.
+
+Start Yosys from the project directory:
+
+```bash
+cd ~/projects/alu4
 yosys
+```
 
-Inside the Yosys shell:
+Run the following commands inside the Yosys prompt:
+
+```text
 read_verilog rtl/alu.v
-hierarchy -top alu_4bit
+hierarchy -check -top alu_4bit
 proc
 opt
 techmap
@@ -94,42 +247,288 @@ abc
 clean
 stat
 write_verilog alu_synth.v
+```
 
-The generated netlist and synthesis statistics can be used to examine the hardware inferred from the RTL.
-ASIC Physical Design
-The project explores an RTL-to-GDSII workflow using OpenLane and the SkyWater SKY130 PDK.
-The typical physical-design process includes:
-1. RTL validation
-2. Logic synthesis
-3. Floorplanning
-4. Power distribution network generation
-5. Placement
-6. Clock-tree synthesis, when required
-7. Global and detailed routing
-8. Design-rule checking
-9. GDSII layout generation
-The stages completed depend on the current state of the project and the results of the implementation flow.
-Learning Objectives
-This project provides hands-on experience with:
-- Digital logic design and Verilog RTL
-- Functional verification and testbench development
-- Simulation and waveform debugging
-- Logic synthesis and gate-level netlists
-- Synthesis statistics and hardware optimization
-- ASIC physical-design concepts
-- Open-source EDA tools
-- RTL-to-GDSII implementation workflows
-Project Status
-Status: Work in Progress
-RTL development, simulation, and synthesis are part of the project. Further physical-design implementation and verification are ongoing.
-Future Improvements
-- Expand testbench coverage
-- Verify all ALU operations and status flags
-- Automate regression testing
-- Analyze synthesis area and timing reports
-- Complete the OpenLane physical-design flow
-- Verify design-rule compliance
-- Generate and inspect the final GDSII layout
-Author
-Uttam Vishnumahanthi
-GitHub: uttam-vishnumahanthi
+These commands illustrate a generic synthesis sequence.
+
+### Synthesis Stages
+
+1. `read_verilog` reads the Verilog source.
+2. `hierarchy` checks the design hierarchy and selects the top module.
+3. `proc` converts procedural constructs into an internal representation.
+4. `opt` performs logic optimization.
+5. `techmap` maps generic logic structures into lower-level primitives.
+6. `abc` invokes logic optimization and mapping using ABC.
+7. `clean` removes unused internal structures.
+8. `stat` displays synthesis statistics.
+9. `write_verilog` writes the resulting netlist to a Verilog file.
+
+The exact synthesis sequence depends on the target technology and tool configuration.
+
+For ASIC implementation, synthesis must use an appropriate standard-cell library and compatible mapping configuration. A generic netlist is not necessarily a technology-mapped ASIC netlist.
+
+## 6. Inspecting the Synthesized Netlist
+
+After synthesis, inspect the generated Verilog netlist:
+
+```bash
+less alu_synth.v
+```
+
+Press `q` to exit.
+
+To locate module declarations, use:
+
+```bash
+grep -n "module" alu_synth.v
+```
+
+The synthesized netlist helps demonstrate how RTL constructs are transformed into lower-level logic.
+
+Depending on the synthesis stage, the netlist may contain:
+
+- Logic gates.
+- Internal wires.
+- Module instances.
+- Boolean expressions.
+- Technology-specific standard-cell instances.
+
+The exact structure depends on the synthesis process and the target library.
+
+## 7. Synthesis Statistics and Optimization
+
+Yosys provides synthesis statistics through the `stat` command.
+
+These statistics can help characterize the synthesized hardware.
+
+Useful information includes:
+
+- Number of cells.
+- Types of inferred or mapped cells.
+- Number of wires and wire bits.
+- Logic structure.
+- Technology-mapping information, when applicable.
+
+Synthesis statistics are useful for understanding how RTL coding choices influence the inferred hardware.
+
+Generic cell counts should not be treated as final ASIC area measurements. Meaningful standard-cell area estimates require appropriate technology mapping and library information.
+
+## 8. Visualizing the Synthesis Graph
+
+A synthesis graph can help visualize the structure of the design.
+
+If a DOT file has already been generated, convert it to PDF using Graphviz:
+
+```bash
+dot -Tpdf alu_synth_graph.dot -o alu_synth_graph.pdf
+```
+
+Open the PDF:
+
+```bash
+xdg-open alu_synth_graph.pdf
+```
+
+The graph depends on the representation exported from Yosys and may show a generic logic structure rather than a physical standard-cell layout.
+
+## 9. ASIC Physical Design Using OpenLane
+
+OpenLane is an open-source RTL-to-GDSII implementation flow.
+
+The project includes an OpenLane design directory:
+
+`alu_pro/`
+
+The design configuration is stored in:
+
+`alu_pro/config.json`
+
+The configuration identifies the design, input RTL files, and selected implementation parameters.
+
+A successful physical-design run requires a compatible tool environment, valid configuration, correctly installed PDK, and appropriate RTL inputs.
+
+### Typical Physical-Design Stages
+
+1. RTL preparation and validation.
+2. Logic synthesis.
+3. Floorplanning.
+4. Tap-cell and endcap insertion, where required.
+5. Power distribution network generation.
+6. Global placement.
+7. Detailed placement.
+8. Clock-tree synthesis, when required.
+9. Global routing.
+10. Detailed routing.
+11. Design-rule checking.
+12. Layout generation and GDSII export.
+
+The actual stages depend on the OpenLane version, design configuration, and implementation requirements.
+
+## 10. SkyWater SKY130 PDK
+
+The project explores the SkyWater SKY130 open-source process design kit.
+
+A process design kit provides technology information used by EDA tools, including standard-cell libraries, technology files, and physical-design rules.
+
+The SKY130 PDK enables exploration of the relationship between RTL logic, standard cells, and physical ASIC implementation.
+
+The selected process and library configuration must be compatible with the synthesis and physical-design flow.
+
+## 11. RTL-to-GDSII Workflow
+
+The overall workflow explored by this project is:
+
+```text
+Verilog RTL
+     |
+     v
+Functional Simulation
+     |
+     v
+RTL Verification
+     |
+     v
+Logic Synthesis
+     |
+     v
+Gate-Level Netlist
+     |
+     v
+Floorplanning
+     |
+     v
+Placement
+     |
+     v
+Clock-Tree Synthesis, if required
+     |
+     v
+Routing
+     |
+     v
+Physical Verification
+     |
+     v
+GDSII Layout
+```
+
+Each stage operates at a different level of abstraction.
+
+Functional simulation checks the logical behavior of the design.
+
+Logic synthesis transforms the RTL into a hardware implementation.
+
+Physical design places and routes the standard cells while accounting for technology constraints.
+
+Physical verification checks whether the resulting layout satisfies the applicable design rules and other requirements.
+
+Generating a GDSII file alone does not guarantee that all timing, electrical, or manufacturing requirements have been satisfied. The corresponding implementation and verification reports must also be reviewed.
+
+## 12. Skills Developed
+
+This project provides practical exposure to several areas of digital IC design.
+
+### Digital Design
+
+- Combinational logic design.
+- Arithmetic and logical operations.
+- Verilog HDL.
+- RTL coding practices.
+- Status-flag behavior.
+
+### Functional Verification
+
+- Testbench development.
+- RTL simulation.
+- Signal inspection.
+- Boundary-condition testing.
+- Debugging functional errors.
+
+### Logic Synthesis
+
+- RTL elaboration.
+- Process lowering.
+- Boolean optimization.
+- Technology mapping.
+- Gate-level netlist analysis.
+- Synthesis statistics.
+
+### ASIC Physical Design
+
+- Floorplanning.
+- Standard-cell placement.
+- Power distribution planning.
+- Routing.
+- Timing analysis.
+- Design-rule checking.
+- GDSII generation.
+
+### Open-Source EDA Tools
+
+- Linux-based hardware design.
+- Icarus Verilog.
+- GTKWave.
+- Yosys.
+- OpenLane.
+- SkyWater SKY130 PDK.
+- Docker-based tool environments.
+- Git and GitHub.
+
+## 13. Future Improvements
+
+Potential improvements include:
+
+- Expand testbench coverage.
+- Verify every ALU operation.
+- Add automated expected-versus-actual comparisons.
+- Test arithmetic boundary conditions.
+- Verify carry, zero, and negative flag behavior.
+- Add reproducible simulation scripts.
+- Improve synthesis scripts.
+- Compare generic and technology-mapped netlists.
+- Analyze standard-cell area.
+- Examine timing reports and critical paths.
+- Complete the OpenLane implementation flow.
+- Resolve physical-design rule violations.
+- Inspect the final layout.
+- Document the generated GDSII and verification results.
+
+## 14. Project Status
+
+**Status: Work in Progress**
+
+The project includes RTL development, simulation, and logic-synthesis work, with ASIC physical-design implementation being explored.
+
+Physical-design completion, timing closure, and GDSII generation should be documented only after the corresponding stages have completed successfully and their reports have been reviewed.
+
+## 15. Repository Usage
+
+Clone the repository:
+
+```bash
+git clone https://github.com/uttam-vishnumahanthi/alu4-asic-design.git
+```
+
+Navigate into the project directory:
+
+```bash
+cd alu4-asic-design
+```
+
+Review the source files and follow the simulation instructions described above.
+
+The commands may need adjustment if the repository structure or tool configuration changes.
+
+## Author
+
+**Uttam Vishnumahanthi**
+
+GitHub: [uttam-vishnumahanthi](https://github.com/uttam-vishnumahanthi)
+
+## License
+
+This project is intended for educational purposes and for learning digital hardware design and open-source ASIC implementation.
+
+A specific open-source license can be added to define the permissions for redistribution, modification, and reuse.
+
+---
