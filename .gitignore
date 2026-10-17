@@ -1,0 +1,23 @@
+# Simulation outputs
+*.vcd
+*.vvp
+alu_sim
+
+# Temporary files
+*.log
+*.tmp
+*.swp
+*~
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OpenLane generated runs and results
+alu_pro/runs/
+alu_pro/results/
+alu_pro/reports/
+alu_pro/logs/
+
+# Operating system files
+.DS_Store
